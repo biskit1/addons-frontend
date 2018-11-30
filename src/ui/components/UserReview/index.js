@@ -8,7 +8,6 @@ import translate from 'core/i18n/translate';
 import { nl2br, sanitizeHTML } from 'core/utils';
 import Icon from 'ui/components/Icon';
 import LoadingText from 'ui/components/LoadingText';
-import ShowMoreCard from 'ui/components/ShowMoreCard';
 import UserRating from 'ui/components/UserRating';
 import type { UserReviewType } from 'amo/actions/reviews';
 import type { I18nType } from 'core/types/i18n';
@@ -33,11 +32,9 @@ type InternalProps = {|
 function reviewBody({
   content,
   html,
-  id,
 }: {|
   content?: React.Node | string,
   html?: React.Node,
-  id?: number,
 |}) {
   invariant(
     content !== undefined || html !== undefined,
@@ -51,16 +48,15 @@ function reviewBody({
   } else {
     bodyAttr.dangerouslySetInnerHTML = html;
   }
+
   return (
-    <ShowMoreCard
+    <div
       className={makeClassName('UserReview-body', {
         // Add an extra class if the content is an empty string.
         'UserReview-emptyBody': !content && !html,
       })}
-      id={id}
-    >
-      <div {...bodyAttr} />
-    </ShowMoreCard>
+      {...bodyAttr}
+    />
   );
 }
 
@@ -82,10 +78,9 @@ export const UserReviewBase = (props: InternalProps) => {
     if (review.body) {
       body = reviewBody({
         html: sanitizeHTML(nl2br(review.body), ['br']),
-        id: review.id,
       });
     } else {
-      body = reviewBody({ content: '', id: review.id });
+      body = reviewBody({ content: '' });
     }
   }
 
